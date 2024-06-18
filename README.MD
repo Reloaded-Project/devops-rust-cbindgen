@@ -52,7 +52,15 @@ C-Bindings-<output-header-file>
 For example, if the `output-header-file` input is set to `bindings_c.h`, the artifact name
 will be `C-Bindings-bindings_c.h`.
 
-If you are not uploading an artifact, the generated header can be found at `${{ inputs.rust-project-path }}/${{ inputs.output-header-file }}`.
+If you are not uploading an artifact, the generated header can be found at
+`${{ inputs.rust-project-path }}/${{ inputs.output-header-file }}`.
+
+## Purpose
+
+This is part of the release pipeline for Reloaded3 libraries and components.
+
+To make things more maintainable, and better for everyone, the code has been wrapped into an
+efficient GitHub Action.
 
 ## License
 
