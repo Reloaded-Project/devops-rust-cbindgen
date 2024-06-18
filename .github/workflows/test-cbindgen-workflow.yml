@@ -1,0 +1,94 @@
+name: Test CBindgen Workflow
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Run daily at midnight
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+    tags:
+      - 'v1'
+    paths:
+      - 'action.yml'
+      - '.github/workflows/test-cbindgen-workflow.yml'
+  pull_request:
+    branches: [ master ]
+    paths:
+      - 'action.yml'
+      - '.github/workflows/test-cbindgen-workflow.yml'
+
+jobs:
+  test-custom-parameters:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Test Repository
+        uses: actions/checkout@v4
+        with:
+          repository: Sewer56/prs-rs
+          ref: d08599ed5473616f57d57a0966939e1a5dbda9b4
+      - name: Test Custom Parameters
+        uses: Reloaded-Project/devops-rust-cbindgen@v1
+        with:
+          rust-project-path: '.'
+          config-file: cbindgen_cpp.toml
+          output-header-file: bindings_cpp.hpp
+          upload-artifact: false
+      - name: Assert Generated Header File
+        shell: bash
+        run: |
+          if [ ! -f bindings_cpp.hpp ]; then
+            echo "Generated header file does not exist"
+            exit 1
+          fi
+
+  test-c-bindings:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Test Repository
+        uses: actions/checkout@v4
+        with:
+          repository: Sewer56/prs-rs
+          ref: d08599ed5473616f57d57a0966939e1a5dbda9b4
+      - name: Test C Bindings
+        uses: Reloaded-Project/devops-rust-cbindgen@v1
+        with:
+          config-file: cbindgen_c.toml
+          output-header-file: bindings_c.h
+          upload-artifact: false
+      - name: Assert Generated C Header File
+        shell: bash
+        run: |
+          if [ ! -f bindings_c.h ]; then
+            echo "Generated C header file does not exist"
+            exit 1
+          fi
+
+  test-artifact-creation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Test Repository
+        uses: actions/checkout@v4
+        with:
+          repository: Sewer56/prs-rs
+          ref: d08599ed5473616f57d57a0966939e1a5dbda9b4
+      - name: Generate Bindings and Create Artifact
+        uses: Reloaded-Project/devops-rust-cbindgen@v1
+        with:
+          config-file: cbindgen_c.toml
+          output-header-file: bindings_c.h
+          upload-artifact: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          commit-updated-bindings: 'false'
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: C-Bindings-bindings_c.h
+          path: artifacts
+      - name: Assert Artifact Contents
+        shell: bash
+        run: |
+          cat artifacts/bindings_c.h
+          if [ ! -f artifacts/bindings_c.h ]; then
+            echo "Extracted artifact does not contain the expected header file"
+            exit 1
+          fi
