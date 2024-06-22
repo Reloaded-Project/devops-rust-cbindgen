@@ -24,7 +24,7 @@ inputs:
     default: 'true'
   github-token:
     description: 'A GitHub token for pushing to the repo. Example: `secrets.GITHUB_TOKEN`'
-    required: true
+    required: false
   commit-updated-bindings:
     description: 'Whether to commit the updated bindings'
     required: false
