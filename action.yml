@@ -39,6 +39,7 @@ runs:
       with:
         key: ${{ inputs.target }}
         cache-on-failure: true
+        cache-all-crates: true
 
     # Note: Cached by setup-rust-toolchain
     - name: Install cbindgen
