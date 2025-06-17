@@ -24,6 +24,7 @@ This GitHub Action generates C bindings with cbindgen for a Rust project.
 | `upload-artifact`         | No       | `true`          | Whether to upload the generated header file as an artifact                     |
 | `github-token`            | No       |                 | A GitHub token for pushing to the repo. Example: `${{ secrets.GITHUB_TOKEN }}` |
 | `commit-updated-bindings` | No       | `false`         | Whether to commit the updated bindings                                         |
+| `use-cache`               | No       | `true`          | Whether to use Rust caching.                                                   |
 
 ## Example Usage
 
@@ -38,6 +39,41 @@ steps:
       upload-artifact: 'true'
       github-token: ${{ secrets.GITHUB_TOKEN }}
       commit-updated-bindings: 'true'
+      use-cache: 'true'
+```
+
+## Caching
+
+By default, this action uses Rust caching to speed up builds. However, you
+***should disable caching on subsequent calls*** if you're running this action
+multiple times in the same workflow.
+
+This is because the cache will make a copy of ***everything*** after *all* the steps finish,\
+so a single cache will contain everything you need from all runs.
+
+### Example: Multiple Calls with Cache Control
+
+```yaml
+steps:
+  - uses: actions/checkout@v4
+  
+  # First call - use cache to speed up initial build
+  - name: Generate bindings for release
+    uses: Reloaded-Project/cbindgen-action@v1
+    with:
+      rust-project-path: '.'
+      config-file: 'cbindgen.toml'
+      output-header-file: 'bindings_release.h'
+      use-cache: 'true'  # Use cache for first call
+  
+  # Second call - disable cache as it's not necessary
+  - name: Generate bindings for debug
+    uses: Reloaded-Project/cbindgen-action@v1
+    with:
+      rust-project-path: '.'
+      config-file: 'cbindgen_debug.toml'
+      output-header-file: 'bindings_debug.h'
+      use-cache: 'false'  # Disable cache for second call
 ```
 
 ## Getting Artifacts

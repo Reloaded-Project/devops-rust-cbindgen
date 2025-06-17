@@ -29,12 +29,17 @@ inputs:
     description: 'Whether to commit the updated bindings'
     required: false
     default: 'false'
+  use-cache:
+    description: 'Whether to use Rust caching. Disable if running this action multiple times and you only want to generate bindings once'
+    required: false
+    default: 'true'
 
 runs:
   using: 'composite'
   steps:
     # Rust preinstalled on runner
     - name: Setup Rust Caching
+      if: ${{ inputs.use-cache == 'true' }}
       uses: Swatinem/rust-cache@v2
       with:
         key: ${{ inputs.target }}
