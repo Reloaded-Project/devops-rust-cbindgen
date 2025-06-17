@@ -25,6 +25,7 @@ This GitHub Action generates C bindings with cbindgen for a Rust project.
 | `github-token`            | No       |                 | A GitHub token for pushing to the repo. Example: `${{ secrets.GITHUB_TOKEN }}` |
 | `commit-updated-bindings` | No       | `false`         | Whether to commit the updated bindings                                         |
 | `use-cache`               | No       | `true`          | Whether to use Rust caching.                                                   |
+| `artifact-prefix`         | No       | `C-Bindings-`   | Prefix for the uploaded artifact (header) name                                 |
 
 ## Example Usage
 
@@ -40,6 +41,7 @@ steps:
       github-token: ${{ secrets.GITHUB_TOKEN }}
       commit-updated-bindings: 'true'
       use-cache: 'true'
+      artifact-prefix: 'C-Bindings-'
 ```
 
 ## Caching
@@ -82,11 +84,22 @@ If the `upload-artifact` input is set to `true`, the generated header file will 
 an artifact with the following name format:
 
 ```
-C-Bindings-<output-header-file>
+<artifact-prefix><output-header-file>
 ```
 
-For example, if the `output-header-file` input is set to `bindings_c.h`, the artifact name
-will be `C-Bindings-bindings_c.h`.
+For example, if the `artifact-prefix` input is set to `C-Bindings-` (default) and the 
+`output-header-file` input is set to `bindings_c.h`, the artifact name will be 
+`C-Bindings-bindings_c.h`.
+
+You can customize the prefix by setting the `artifact-prefix` input:
+
+```yaml
+- uses: Reloaded-Project/cbindgen-action@v1
+  with:
+    artifact-prefix: 'MyProject-Headers-'
+    output-header-file: 'bindings.h'
+    # This will create an artifact named: MyProject-Headers-bindings.h
+```
 
 If you are not uploading an artifact, the generated header can be found at
 `${{ inputs.rust-project-path }}/${{ inputs.output-header-file }}`.

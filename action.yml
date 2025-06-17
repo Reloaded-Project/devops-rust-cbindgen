@@ -33,6 +33,10 @@ inputs:
     description: 'Whether to use Rust caching. Disable if running this action multiple times and you only want to generate bindings once'
     required: false
     default: 'true'
+  artifact-prefix:
+    description: 'Prefix for the uploaded artifact name'
+    required: false
+    default: 'C-Bindings-'
 
 runs:
   using: 'composite'
@@ -61,7 +65,7 @@ runs:
       if: ${{ inputs.upload-artifact == 'true' }}
       uses: actions/upload-artifact@v4
       with:
-        name: C-Bindings-${{ inputs.output-header-file }}
+        name: ${{ inputs.artifact-prefix }}${{ inputs.output-header-file }}
         path: ${{ inputs.rust-project-path }}/${{ inputs.output-header-file }}
 
     - name: Commit updated bindings
