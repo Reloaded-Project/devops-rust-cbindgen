@@ -2,41 +2,37 @@ name: Test CBindgen Workflow
 
 on:
   schedule:
-    - cron: '0 0 * * *' # Run daily at midnight
+    - cron: "0 0 * * *" # Run daily at midnight
   workflow_dispatch:
-  push:
-    branches: [ v1-master ]
-    tags:
-      - 'v1'
-    paths:
-      - 'action.yml'
-      - '.github/workflows/test-cbindgen-workflow.yml'
   pull_request:
-    branches: [ v1-master ]
+    branches: [v1-master]
     paths:
-      - 'action.yml'
-      - '.github/workflows/test-cbindgen-workflow.yml'
+      - "action.yml"
+      - ".github/workflows/test-cbindgen-workflow.yml"
 
 jobs:
   test-custom-parameters:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Action Repository
+        uses: actions/checkout@v4
       - name: Checkout Test Repository
         uses: actions/checkout@v4
         with:
           repository: Sewer56/prs-rs
           ref: d08599ed5473616f57d57a0966939e1a5dbda9b4
+          path: test-project
       - name: Test Custom Parameters
-        uses: Reloaded-Project/devops-rust-cbindgen@v1
+        uses: ./
         with:
-          rust-project-path: '.'
+          rust-project-path: test-project
           config-file: cbindgen_cpp.toml
           output-header-file: bindings_cpp.hpp
           upload-artifact: false
       - name: Assert Generated Header File
         shell: bash
         run: |
-          if [ ! -f bindings_cpp.hpp ]; then
+          if [ ! -f test-project/bindings_cpp.hpp ]; then
             echo "Generated header file does not exist"
             exit 1
           fi
@@ -44,21 +40,25 @@ jobs:
   test-c-bindings:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Action Repository
+        uses: actions/checkout@v4
       - name: Checkout Test Repository
         uses: actions/checkout@v4
         with:
           repository: Sewer56/prs-rs
           ref: d08599ed5473616f57d57a0966939e1a5dbda9b4
+          path: test-project
       - name: Test C Bindings
-        uses: Reloaded-Project/devops-rust-cbindgen@v1
+        uses: ./
         with:
+          rust-project-path: test-project
           config-file: cbindgen_c.toml
           output-header-file: bindings_c.h
           upload-artifact: false
       - name: Assert Generated C Header File
         shell: bash
         run: |
-          if [ ! -f bindings_c.h ]; then
+          if [ ! -f test-project/bindings_c.h ]; then
             echo "Generated C header file does not exist"
             exit 1
           fi
@@ -66,19 +66,23 @@ jobs:
   test-artifact-creation:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Action Repository
+        uses: actions/checkout@v4
       - name: Checkout Test Repository
         uses: actions/checkout@v4
         with:
           repository: Sewer56/prs-rs
           ref: d08599ed5473616f57d57a0966939e1a5dbda9b4
+          path: test-project
       - name: Generate Bindings and Create Artifact
-        uses: Reloaded-Project/devops-rust-cbindgen@v1
+        uses: ./
         with:
+          rust-project-path: test-project
           config-file: cbindgen_c.toml
           output-header-file: bindings_c.h
           upload-artifact: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          commit-updated-bindings: 'false'
+          commit-updated-bindings: "false"
       - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
