@@ -63,7 +63,7 @@ runs:
 
     - name: Upload header file
       if: ${{ inputs.upload-artifact == 'true' }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: ${{ inputs.artifact-prefix }}${{ inputs.output-header-file }}
         path: ${{ inputs.rust-project-path }}/${{ inputs.output-header-file }}
