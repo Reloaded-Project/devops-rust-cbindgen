@@ -84,7 +84,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           commit-updated-bindings: "false"
       - name: Download Artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: C-Bindings-bindings_c.h
           path: artifacts
