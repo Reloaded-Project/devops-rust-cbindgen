@@ -15,9 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Action Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Checkout Test Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: Sewer56/prs-rs
           ref: d08599ed5473616f57d57a0966939e1a5dbda9b4
@@ -41,9 +41,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Action Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Checkout Test Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: Sewer56/prs-rs
           ref: d08599ed5473616f57d57a0966939e1a5dbda9b4
@@ -67,9 +67,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Action Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Checkout Test Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: Sewer56/prs-rs
           ref: d08599ed5473616f57d57a0966939e1a5dbda9b4
